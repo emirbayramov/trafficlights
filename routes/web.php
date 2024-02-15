@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/sync', [\App\Http\Controllers\DrivingController::class, 'sync']);
+Route::get('/drive', [\App\Http\Controllers\DrivingController::class, 'drive']);
+
+Route::get('/', [\App\Http\Controllers\DrivingController::class, 'index']);

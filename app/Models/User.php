@@ -8,9 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property string session_id
+ * @property Driving[] drivings
+ */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,9 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'session_id'
     ];
 
     /**
@@ -29,8 +30,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+
     ];
 
     /**
@@ -39,7 +39,29 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+
     ];
+
+    public function drivings()
+    {
+        return $this->hasMany(Driving::class);
+    }
+
+    /**
+     * Returns user by session id, creates new if not exists
+     * @return User
+     */
+    public static function getBySession(string $session): User
+    {
+        $user = User::where('session_id', $session)
+            ->first();
+
+        if (!$user) {
+            $user = new User();
+            $user->session_id = $session;
+            $user->save();
+        }
+
+        return $user;
+    }
 }
